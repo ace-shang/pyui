@@ -32,8 +32,8 @@ class LinkList:
         else:
             while cur.next != None:
                 cur = cur.next
-                node.prev = cur
-                cur.next = node
+            node.prev = cur
+            cur.next = node
 
     def cut_off(self, item: Node):
         """
@@ -60,16 +60,16 @@ class LinkList:
             if cur == item:
                 if cur.next == None:
                     self.__head = None
-            else:
-                cur.next.prev = None
-                self.__head = cur.next
+                else:
+                    cur.next.prev = None
+                    self.__head = cur.next
 
             while cur != None:
                 if cur == item:
                     cur.prev.next = cur.next
                     cur.next.prev = cur.prev
                     break
-            cur = cur.next
+                cur = cur.next
 
     def popup(self):
         """
@@ -79,7 +79,7 @@ class LinkList:
             return
         else:
             cur = self.__head
-        while cur.next != None:
-            cur = cur.next
+            while cur.next != None:
+                cur = cur.next
             cur.prev.next = None
-        return cur
+            return cur

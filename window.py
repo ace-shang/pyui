@@ -1,6 +1,7 @@
 
 import curses
 import list
+import color
 from item import *
 
 class Win(object):
@@ -19,12 +20,13 @@ class WinList(list.LinkList):
 
 
 class Window(object):
-    def __init__(self, debugWin):
+    def __init__(self, parentWin):
         """
         初始窗口，无其他功能，之作基垫使用
         """
-        self.rootWin = debugWin
+        self.rootWin = parentWin
         # self.rootWin = curses.initscr()
+        self.__color = color.Color(curses)
         """
         根节点
         """
@@ -34,14 +36,14 @@ class Window(object):
         """
         self.__winList:WinList = WinList()
         self.__winList.append(self.__rootNode)
-        self.__currentNode:WinNode = self.__rootNode
+        self.__currentNode = self.__rootNode
 
     def __display_win(self):
         """
         刷新当前窗口
         """
         win = self.__currentNode.item.win
-        itempad = self.__currentNode.item.itempad
+        # itempad = self.__currentNode.item.itempad
         win.refresh()
         # 保存窗口 win，下次刷新时显示
         win.redrawwin()
@@ -52,6 +54,7 @@ class Window(object):
             x >= curses.COLS or x < 0:
             return
         win = curses.newwin(h, w, y, x)
+
         win.box()
 
         if title is not None:
@@ -59,7 +62,7 @@ class Window(object):
                     int((w - len(title)) / 2),
                     "{}".format(title.upper()))
 
-        itempad = ItemPad(win)
+        itempad = ItemPad(win, self.__color)
         self.__winList.cut_off(self.__currentNode)
         self.__currentNode = WinNode(Win(win, itempad))
         self.__winList.append(self.__currentNode)
@@ -77,9 +80,16 @@ class Window(object):
             self.__currentNode = self.__currentNode.prev
             self.__display_win()
 
-    def set_title(self, title):
-        pass
+    def new_item(self, content):
+        if self.__currentNode is not None:
+            itempad = self.__currentNode.item.itempad
+            itempad.new_item(content)
 
-    def set_item(self, content):
+    def next_item(self):
         itempad = self.__currentNode.item.itempad
-        itempad.new_item(content)
+        itempad.next_item()
+
+    def prev_item(self):
+        itempad = self.__currentNode.item.itempad
+        itempad.prev_item()
+
